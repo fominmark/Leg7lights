@@ -7,47 +7,63 @@
         mc:Ignorable="d"
         Title="MainWindow"
         ResizeMode="NoResize"
-        SizeToContent="WidthAndHeight">
+        SizeToContent="Height"
+        Width="600">
 
     <Grid x:Name="CustomFields">
 
-        <!-- Individual text fields -->
-        <TextBox x:Name="textKeys" Width="150" Height="30" MaxLength="6" VerticalAlignment="Top" Margin="100,42,550,0" TextChanged="TextFields_TextChanged"/>
-        <Border x:Name="colorBoxKeys" Width="20" Height="20" VerticalAlignment="Top" Margin="260,42,0,0" Background="Transparent" BorderBrush="Gray" BorderThickness="1"/>
+        <!-- Grouped fields -->
+        <StackPanel x:Name="groupFields" Visibility="Visible" Margin="20,72,20,120">
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <TextBlock Text="Keys" Width="50" VerticalAlignment="Center"/>
+                <TextBox x:Name="textKeys" Width="150" Height="30" MaxLength="6" TextChanged="TextFields_TextChanged" 
+                         PreviewTextInput="HexInput_PreviewTextInput"/>
+                <Border x:Name="colorBoxKeys" Width="20" Height="20" Background="Transparent" BorderBrush="Gray" BorderThickness="1" Margin="5,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <TextBlock Text="Logo" Width="50" VerticalAlignment="Center"/>
+                <TextBox x:Name="textLogo" Width="150" Height="30" MaxLength="6" TextChanged="TextFields_TextChanged" 
+                         PreviewTextInput="HexInput_PreviewTextInput"/>
+                <Border x:Name="colorBoxLogo" Width="20" Height="20" Background="Transparent" BorderBrush="Gray" BorderThickness="1" Margin="5,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <TextBlock Text="Vents" Width="50" VerticalAlignment="Center"/>
+                <TextBox x:Name="textVents" Width="150" Height="30" MaxLength="6" TextChanged="TextFields_TextChanged" 
+                         PreviewTextInput="HexInput_PreviewTextInput"/>
+                <Border x:Name="colorBoxVents" Width="20" Height="20" Background="Transparent" BorderBrush="Gray" BorderThickness="1" Margin="5,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <TextBlock Text="Neon" Width="50" VerticalAlignment="Center"/>
+                <TextBox x:Name="textNeon" Width="150" Height="30" MaxLength="6" TextChanged="TextFields_TextChanged" 
+                         PreviewTextInput="HexInput_PreviewTextInput"/>
+                <Border x:Name="colorBoxNeon" Width="20" Height="20" Background="Transparent" BorderBrush="Gray" BorderThickness="1" Margin="5,0,0,0"/>
+            </StackPanel>
+        </StackPanel>
 
-        <TextBox x:Name="textLogo" Width="150" Height="30" MaxLength="6" VerticalAlignment="Top" Margin="100,98,550,0" TextChanged="TextFields_TextChanged"/>
-        <Border x:Name="colorBoxLogo" Width="20" Height="20" VerticalAlignment="Top" Margin="260,98,0,0" Background="Transparent" BorderBrush="Gray" BorderThickness="1"/>
+        <!-- All fields -->
+        <StackPanel x:Name="allFields" Visibility="Collapsed" Margin="20,72,20,120">
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <TextBlock Text="All" Width="50" VerticalAlignment="Center"/>
+                <TextBox x:Name="textAll" Width="150" Height="30" MaxLength="6" TextChanged="TextAll_TextChanged" 
+                         PreviewTextInput="HexInput_PreviewTextInput"/>
+                <Border x:Name="colorBoxAll" Width="20" Height="20" Background="Transparent" BorderBrush="Gray" BorderThickness="1" Margin="5,0,0,0"/>
+            </StackPanel>
+        </StackPanel>
 
-        <TextBox x:Name="textVents" Width="150" Height="30" MaxLength="6" VerticalAlignment="Top" Margin="100,161,550,0" TextChanged="TextFields_TextChanged"/>
-        <Border x:Name="colorBoxVents" Width="20" Height="20" VerticalAlignment="Top" Margin="260,161,0,0" Background="Transparent" BorderBrush="Gray" BorderThickness="1"/>
-
-        <TextBox x:Name="textNeon" Width="150" Height="30" MaxLength="6" VerticalAlignment="Top" Margin="100,217,550,0" TextChanged="TextFields_TextChanged"/>
-        <Border x:Name="colorBoxNeon" Width="20" Height="20" VerticalAlignment="Top" Margin="260,217,0,0" Background="Transparent" BorderBrush="Gray" BorderThickness="1"/>
-
-        <!-- For 'All' -->
-        <TextBox x:Name="textAll" Width="150" Height="30" MaxLength="6" VerticalAlignment="Top" Margin="100,42,550,0" Visibility="Hidden" TextChanged="TextAll_TextChanged"/>
-        <Border x:Name="colorBoxAll" Width="20" Height="20" VerticalAlignment="Top" Margin="260,42,0,0" Background="Transparent" BorderBrush="Gray" BorderThickness="1" Visibility="Hidden"/>
-        
         <!-- Read-only result field -->
-        <TextBox x:Name="textResult" Height="30" VerticalAlignment="Top" Text="-keys -logo -vents -neon" Margin="25,374,322,0" IsReadOnly="True" IsReadOnlyCaretVisible="True"/>
-
-        <!-- Status label for copy confirmation -->
-        <Label x:Name="copyStatusLabel" Content="Text copied!" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,374,150,0" FontSize="12" Foreground="Green"/>
+        <TextBox x:Name="textResult" Height="30" Margin="20,270,20,60" IsReadOnly="True" IsReadOnlyCaretVisible="True"/>
 
         <!-- Radio buttons -->
-        <RadioButton x:Name="radioGroups" Content="Groups" HorizontalAlignment="Left" Margin="647,57,0,0" VerticalAlignment="Top" IsChecked="True" Checked="RadioButton_Checked"/>
-        <RadioButton x:Name="radioAll" Content="All" HorizontalAlignment="Left" Margin="647,86,0,0" VerticalAlignment="Top" Checked="RadioButton_Checked"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,20,0,320" Width="175">
+            <RadioButton x:Name="radioGroups" Content="Groups" IsChecked="True" Checked="RadioButton_Checked" Margin="0,0,10,0"/>
+            <RadioButton x:Name="radioAll" Content="All" Checked="RadioButton_Checked"/>
+        </StackPanel>
 
         <!-- Copy button -->
-        <Button x:Name="CopyButton" Width="100" Height="30" Content="Copy" Click="CopyButton_Click" Margin="629,374,71,30"/>
+        <Button x:Name="CopyButton" Width="100" Height="30" Content="Copy" Click="CopyButton_Click" Margin="20,320,20,10"/>
 
-        <!-- Labels for individual fields -->
-        <TextBlock x:Name="labelKeys" TextWrapping="Wrap" Text="Keys" Margin="21,49,689,354"/>
-        <TextBlock x:Name="labelLogo" TextWrapping="Wrap" Text="Logo" Margin="21,113,689,290"/>
-        <TextBlock x:Name="labelVents" TextWrapping="Wrap" Text="Vents" Margin="21,176,689,227"/>
-        <TextBlock x:Name="labelNeon" TextWrapping="Wrap" Text="Neon" Margin="21,232,689,171"/>
-        <!-- Label for the "All" field -->
-        <TextBlock x:Name="labelAll" TextWrapping="Wrap" Text="All" Margin="21,42,689,354" Visibility="Collapsed"/>
-
+        <!-- Status label for copy confirmation -->
+        <Label x:Name="copyStatusLabel" Content="Text copied!" Visibility="Collapsed" HorizontalAlignment="Right" 
+               Margin="0,350,20,0" FontSize="12" Foreground="Green"/>
     </Grid>
 </Window>
