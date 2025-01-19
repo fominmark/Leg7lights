@@ -59,11 +59,13 @@
             <RadioButton x:Name="radioAll" Content="All" Checked="RadioButton_Checked"/>
         </StackPanel>
 
-        <!-- Copy button -->
-        <Button x:Name="CopyButton" Width="100" Height="30" Content="Copy" Click="CopyButton_Click" Margin="20,320,20,10"/>
+        <!-- Copy button and copy confirmation message-->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,320,20,10">
+            <!-- <Label x:Name="copyStatusLabel" Content="Text copied!" Visibility="Collapsed" HorizontalAlignment="Right" 
+               Margin="0,350,20,0" FontSize="12" Foreground="Green"/> -->
+            <Button x:Name="CopyButton" Width="100" Height="30" Content="Copy" Click="CopyButton_Click"/>
+            <Label x:Name="copyStatusLabel" Content="Text copied!" Visibility="Collapsed" FontSize="12" Foreground="Green"/>
+        </StackPanel>
 
-        <!-- Status label for copy confirmation -->
-        <Label x:Name="copyStatusLabel" Content="Text copied!" Visibility="Collapsed" HorizontalAlignment="Right" 
-               Margin="0,350,20,0" FontSize="12" Foreground="Green"/>
     </Grid>
 </Window>

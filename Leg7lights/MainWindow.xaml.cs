@@ -105,10 +105,17 @@ namespace Leg7lights
             }
         }
 
-        private void CopyButton_Click(object sender, RoutedEventArgs e)
+        private async void CopyButton_Click(object sender, RoutedEventArgs e)
         {
+            // Copy the text to the clipboard
             Clipboard.SetText(textResult.Text);
-            MessageBox.Show("Copied!");
+
+            // Show the copy confirmation label
+            copyStatusLabel.Visibility = Visibility.Visible;
+            await Task.Delay(2000);
+
+            // Hide the confirmation label
+            copyStatusLabel.Visibility = Visibility.Collapsed;
         }
     }
 }
