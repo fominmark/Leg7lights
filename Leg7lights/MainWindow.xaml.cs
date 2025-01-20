@@ -3,6 +3,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Diagnostics;
+using System.IO;
+using System.Collections.Generic;
 
 namespace Leg7lights
 {
@@ -76,11 +79,27 @@ namespace Leg7lights
         {
             if (radioGroups.IsChecked == true)
             {
-                textResult.Text = $"-keys {textKeys.Text} -logo {textLogo.Text} -vents {textVents.Text} -neon {textNeon.Text}";
+                var parts = new List<string>();
+                
+                if (IsValidHexColor(textKeys.Text) && textKeys.Text.Length == 6)
+                    parts.Add($"-keys {textKeys.Text}");
+                    
+                if (IsValidHexColor(textLogo.Text) && textLogo.Text.Length == 6)
+                    parts.Add($"-logo {textLogo.Text}");
+                    
+                if (IsValidHexColor(textVents.Text) && textVents.Text.Length == 6)
+                    parts.Add($"-vents {textVents.Text}");
+                    
+                if (IsValidHexColor(textNeon.Text) && textNeon.Text.Length == 6)
+                    parts.Add($"-neon {textNeon.Text}");
+                    
+                textResult.Text = string.Join(" ", parts);
             }
             else if (radioAll.IsChecked == true)
             {
-                textResult.Text = $"-all {textAll.Text}";
+                textResult.Text = IsValidHexColor(textAll.Text) && textAll.Text.Length == 6 
+                    ? $"-all {textAll.Text}" 
+                    : string.Empty;
             }
         }
 
@@ -95,9 +114,11 @@ namespace Leg7lights
 
         private void UpdateColorBox(TextBox textBox, Border colorBox)
         {
-            if (IsValidHexColor(textBox.Text) && textBox.Text.Length == 6)
+            string text = textBox.Text;
+
+            if (!string.IsNullOrEmpty(text) && IsValidHexColor(text) && text.Length == 6)
             {
-                colorBox.Background = (SolidColorBrush)new BrushConverter().ConvertFrom($"#{textBox.Text}");
+                colorBox.Background = (SolidColorBrush)new BrushConverter().ConvertFrom($"#{text}");
             }
             else
             {
@@ -116,6 +137,41 @@ namespace Leg7lights
 
             // Hide the confirmation label
             copyStatusLabel.Visibility = Visibility.Collapsed;
+        }
+
+        private async void ApplyButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "legion7-rgb-ps-main", "legion7-rgb.ps1");
+                string arguments = $"-executionPolicy bypass -file \"{scriptPath}\" {textResult.Text}";
+
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = "powershell.exe",
+                    Arguments = arguments,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                using (var process = Process.Start(startInfo))
+                {
+                    if (process != null)
+                    {
+                        await process.WaitForExitAsync();
+                        if (process.ExitCode != 0)
+                        {
+                            MessageBox.Show("Error executing PowerShell script", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
