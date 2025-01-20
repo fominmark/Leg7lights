@@ -6,14 +6,19 @@ using System.Windows.Media;
 using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Leg7lights
 {
     public partial class MainWindow : Window
     {
+        private readonly LegionLightingController _controller;
+
         public MainWindow()
         {
             InitializeComponent();
+            _controller = new LegionLightingController();
 
             // Add PreviewExecuted handler for all TextBoxes
             CommandManager.AddPreviewExecutedHandler(textKeys, HandlePasteCommand);
@@ -25,7 +30,7 @@ namespace Leg7lights
 
         private void HexInput_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !IsValidHexColor(e.Text);
+            e.Handled = !Regex.IsMatch(e.Text, @"^[0-9a-fA-F]+$");
         }
 
         private void HandlePasteCommand(object sender, ExecutedRoutedEventArgs e)
@@ -66,13 +71,23 @@ namespace Leg7lights
 
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            bool isGroupsMode = radioGroups.IsChecked == true;
+            // Проверяем, что окно полностью инициализировано
+            if (!IsLoaded) return;
+            
+            // Проверяем, что элементы UI существуют
+            if (allFields == null || groupFields == null) return;
 
-            groupFields.Visibility = isGroupsMode ? Visibility.Visible : Visibility.Collapsed;
-            allFields.Visibility = isGroupsMode ? Visibility.Collapsed : Visibility.Visible;
-
+            if (radioAll != null && radioAll.IsChecked == true)
+            {
+                allFields.Visibility = Visibility.Visible;
+                groupFields.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                allFields.Visibility = Visibility.Collapsed;
+                groupFields.Visibility = Visibility.Visible;
+            }
             UpdateResult();
-            UpdateColorIndicators();
         }
 
         private void UpdateResult()
@@ -118,7 +133,7 @@ namespace Leg7lights
 
             if (!string.IsNullOrEmpty(text) && IsValidHexColor(text) && text.Length == 6)
             {
-                colorBox.Background = (SolidColorBrush)new BrushConverter().ConvertFrom($"#{text}");
+                colorBox.Background = new BrushConverter().ConvertFrom($"#{text}") as SolidColorBrush ?? Brushes.Transparent;
             }
             else
             {
@@ -128,14 +143,9 @@ namespace Leg7lights
 
         private async void CopyButton_Click(object sender, RoutedEventArgs e)
         {
-            // Copy the text to the clipboard
             Clipboard.SetText(textResult.Text);
-
-            // Show the copy confirmation label
             copyStatusLabel.Visibility = Visibility.Visible;
             await Task.Delay(2000);
-
-            // Hide the confirmation label
             copyStatusLabel.Visibility = Visibility.Collapsed;
         }
 
@@ -143,29 +153,23 @@ namespace Leg7lights
         {
             try
             {
-                string scriptPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "legion7-rgb-ps-main", "legion7-rgb.ps1");
-                string arguments = $"-executionPolicy bypass -file \"{scriptPath}\" {textResult.Text}";
-
-                var startInfo = new ProcessStartInfo
+                if (radioGroups.IsChecked == true)
                 {
-                    FileName = "powershell.exe",
-                    Arguments = arguments,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
-                };
-
-                using (var process = Process.Start(startInfo))
+                    if (IsValidHexColor(textKeys.Text) && textKeys.Text.Length == 6)
+                        await _controller.SetColor("keys", textKeys.Text);
+                        
+                    if (IsValidHexColor(textLogo.Text) && textLogo.Text.Length == 6)
+                        await _controller.SetColor("logo", textLogo.Text);
+                        
+                    if (IsValidHexColor(textVents.Text) && textVents.Text.Length == 6)
+                        await _controller.SetColor("vents", textVents.Text);
+                        
+                    if (IsValidHexColor(textNeon.Text) && textNeon.Text.Length == 6)
+                        await _controller.SetColor("neon", textNeon.Text);
+                }
+                else if (radioAll.IsChecked == true && IsValidHexColor(textAll.Text) && textAll.Text.Length == 6)
                 {
-                    if (process != null)
-                    {
-                        await process.WaitForExitAsync();
-                        if (process.ExitCode != 0)
-                        {
-                            MessageBox.Show("Error executing PowerShell script", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                    }
+                    await _controller.SetColor("all", textAll.Text);
                 }
             }
             catch (Exception ex)
