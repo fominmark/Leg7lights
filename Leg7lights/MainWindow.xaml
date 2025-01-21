@@ -4,67 +4,80 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Leg7lights"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="MainWindow"
+        Title="Legion 7 Lights"
         ResizeMode="NoResize"
         SizeToContent="Height"
         Width="600">
 
     <Grid x:Name="CustomFields">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
 
         <!-- Grouped fields -->
-        <StackPanel x:Name="groupFields" Visibility="Visible" Margin="20,72,20,120">
-            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                <TextBlock Text="Keys" Width="50" VerticalAlignment="Center"/>
-                <TextBox x:Name="textKeys" Width="150" Height="30" MaxLength="6" TextChanged="TextFields_TextChanged" 
-                         PreviewTextInput="HexInput_PreviewTextInput"/>
-                <Border x:Name="colorBoxKeys" Width="20" Height="20" Background="Transparent" BorderBrush="Gray" BorderThickness="1" Margin="5,0,0,0"/>
+        <StackPanel Grid.Column="0" Margin="10,10,263,10">
+            <RadioButton x:Name="radioGroups" Content="Set colors by group" Checked="RadioButton_Checked" IsChecked="True" Margin="0,0,0,5"/>
+            <RadioButton x:Name="radioAll" Content="Set all colors" Checked="RadioButton_Checked" Margin="0,0,0,10"/>
+
+            <StackPanel x:Name="groupFields" Visibility="Visible">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Keys:" Width="50"/>
+                    <TextBox x:Name="textKeys" Width="100" TextChanged="TextFields_TextChanged" 
+                            PreviewTextInput="HexInput_PreviewTextInput" GotFocus="TextBox_GotFocus"/>
+                    <Border x:Name="colorBoxKeys" Width="20" Height="20" Margin="5,0,0,0"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Logo:" Width="50"/>
+                    <TextBox x:Name="textLogo" Width="100" TextChanged="TextFields_TextChanged" 
+                            PreviewTextInput="HexInput_PreviewTextInput" GotFocus="TextBox_GotFocus"/>
+                    <Border x:Name="colorBoxLogo" Width="20" Height="20" Margin="5,0,0,0"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Vents:" Width="50"/>
+                    <TextBox x:Name="textVents" Width="100" TextChanged="TextFields_TextChanged" 
+                            PreviewTextInput="HexInput_PreviewTextInput" GotFocus="TextBox_GotFocus"/>
+                    <Border x:Name="colorBoxVents" Width="20" Height="20" Margin="5,0,0,0"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Neon:" Width="50"/>
+                    <TextBox x:Name="textNeon" Width="100" TextChanged="TextFields_TextChanged" 
+                            PreviewTextInput="HexInput_PreviewTextInput" GotFocus="TextBox_GotFocus"/>
+                    <Border x:Name="colorBoxNeon" Width="20" Height="20" Margin="5,0,0,0"/>
+                </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                <TextBlock Text="Logo" Width="50" VerticalAlignment="Center"/>
-                <TextBox x:Name="textLogo" Width="150" Height="30" MaxLength="6" TextChanged="TextFields_TextChanged" 
-                         PreviewTextInput="HexInput_PreviewTextInput"/>
-                <Border x:Name="colorBoxLogo" Width="20" Height="20" Background="Transparent" BorderBrush="Gray" BorderThickness="1" Margin="5,0,0,0"/>
+
+            <StackPanel x:Name="allFields" Visibility="Collapsed">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="All:" Width="50"/>
+                    <TextBox x:Name="textAll" Width="100" TextChanged="TextAll_TextChanged" 
+                            PreviewTextInput="HexInput_PreviewTextInput" GotFocus="TextBox_GotFocus"/>
+                    <Border x:Name="colorBoxAll" Width="20" Height="20" Margin="5,0,0,0"/>
+                </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                <TextBlock Text="Vents" Width="50" VerticalAlignment="Center"/>
-                <TextBox x:Name="textVents" Width="150" Height="30" MaxLength="6" TextChanged="TextFields_TextChanged" 
-                         PreviewTextInput="HexInput_PreviewTextInput"/>
-                <Border x:Name="colorBoxVents" Width="20" Height="20" Background="Transparent" BorderBrush="Gray" BorderThickness="1" Margin="5,0,0,0"/>
+
+            <!-- Read-only result field -->
+            <TextBlock x:Name="textResult" Text="" Margin="0,10"/>
+
+            <!-- Copy button and copy confirmation message-->
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Width="157">
+                <TextBlock x:Name="copyStatusLabel" Text="Copied!" Visibility="Collapsed"/>
+                <Button Content="Copy" Click="CopyButton_Click" Margin="0,0,0,10"/>
+                <Button Content="Apply" Click="ApplyButton_Click"/>
+
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                <TextBlock Text="Neon" Width="50" VerticalAlignment="Center"/>
-                <TextBox x:Name="textNeon" Width="150" Height="30" MaxLength="6" TextChanged="TextFields_TextChanged" 
-                         PreviewTextInput="HexInput_PreviewTextInput"/>
-                <Border x:Name="colorBoxNeon" Width="20" Height="20" Background="Transparent" BorderBrush="Gray" BorderThickness="1" Margin="5,0,0,0"/>
-            </StackPanel>
+
         </StackPanel>
 
-        <!-- All fields -->
-        <StackPanel x:Name="allFields" Visibility="Collapsed" Margin="20,72,20,120">
-            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                <TextBlock Text="All" Width="50" VerticalAlignment="Center"/>
-                <TextBox x:Name="textAll" Width="150" Height="30" MaxLength="6" TextChanged="TextAll_TextChanged" 
-                         PreviewTextInput="HexInput_PreviewTextInput"/>
-                <Border x:Name="colorBoxAll" Width="20" Height="20" Background="Transparent" BorderBrush="Gray" BorderThickness="1" Margin="5,0,0,0"/>
-            </StackPanel>
-        </StackPanel>
-
-        <!-- Read-only result field -->
-        <TextBox x:Name="textResult" Height="30" Margin="20,270,20,60" IsReadOnly="True" IsReadOnlyCaretVisible="True"/>
-
-        <!-- Radio buttons -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,20,0,320" Width="175">
-            <RadioButton x:Name="radioGroups" Content="Groups" IsChecked="True" Checked="RadioButton_Checked" Margin="0,0,10,0"/>
-            <RadioButton x:Name="radioAll" Content="All" Checked="RadioButton_Checked"/>
-        </StackPanel>
-
-        <!-- Copy button and copy confirmation message-->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,320,20,10">
-            <Button x:Name="CopyButton" Width="100" Height="30" Content="Copy" Click="CopyButton_Click"/>
-            <Button x:Name="ApplyButton" Width="100" Height="30" Content="Apply" Click="ApplyButton_Click" Margin="10,0,0,0"/>
-            <Label x:Name="copyStatusLabel" Content="Text copied!" Visibility="Collapsed" FontSize="12" Foreground="Green"/>
-        </StackPanel>
-
+        <!-- Заменяем ColorPicker на ColorCanvas -->
+        <xctk:ColorCanvas Margin="328,10,10,10"
+                          x:Name="mainColorCanvas"
+                          SelectedColorChanged="ColorCanvas_SelectedColorChanged"
+                          IsEnabled="False"/>
     </Grid>
 </Window>

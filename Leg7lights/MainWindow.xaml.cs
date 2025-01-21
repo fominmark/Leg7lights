@@ -8,12 +8,14 @@ using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using Xceed.Wpf.Toolkit;
 
 namespace Leg7lights
 {
     public partial class MainWindow : Window
     {
         private readonly LegionLightingController _controller;
+        private TextBox? _activeTextBox;
 
         public MainWindow()
         {
@@ -71,10 +73,10 @@ namespace Leg7lights
 
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            // Проверяем, что окно полностью инициализировано
+            // Check if fully initialized
             if (!IsLoaded) return;
             
-            // Проверяем, что элементы UI существуют
+            // Check if UI elements visible
             if (allFields == null || groupFields == null) return;
 
             if (radioAll != null && radioAll.IsChecked == true)
@@ -174,7 +176,41 @@ namespace Leg7lights
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show($"Error: {ex.Message}", "Error", 
+                    System.Windows.MessageBoxButton.OK, 
+                    System.Windows.MessageBoxImage.Error);
+            }
+        }
+
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            _activeTextBox = sender as TextBox;
+            mainColorCanvas.IsEnabled = _activeTextBox != null;
+            
+            if (_activeTextBox != null && IsValidHexColor(_activeTextBox.Text) && _activeTextBox.Text.Length == 6)
+            {
+                var color = (Color)ColorConverter.ConvertFromString("#" + _activeTextBox.Text);
+                mainColorCanvas.SelectedColor = color;
+            }
+        }
+
+        private void ColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            if (_activeTextBox != null && e.NewValue.HasValue)
+            {
+                var color = e.NewValue.Value;
+                var hex = color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2");
+                _activeTextBox.Text = hex;
+            }
+        }
+
+        private void ColorCanvas_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            if (_activeTextBox != null && e.NewValue.HasValue)
+            {
+                var color = e.NewValue.Value;
+                var hex = color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2");
+                _activeTextBox.Text = hex;
             }
         }
     }
